@@ -7,20 +7,23 @@
           <input
             type="text"
             id="name"
-            class="form-control">
+            class="form-control"
+            #nameInput>
         </div>
         <div class="col-sm-2 form-group">
           <label for="amount">Amount</label>
           <input
             type="text"
             id="amount"
-            class="form-control">
+            class="form-control"
+            #amountInput>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-12">
           <button
             type="button"
+            (click)="onAddItem()"
             class="btn btn-success">Add</button>
           <button
             type="button"
