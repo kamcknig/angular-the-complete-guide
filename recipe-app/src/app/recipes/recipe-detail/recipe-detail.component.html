@@ -24,8 +24,12 @@
       </button>
       <ul class="dropdown-menu">
         <li><a (click)="onAddToShoppingList()" style="cursor:pointer;">Shopping List</a></li>
-        <li><a href="#">Edit Recipe</a></li>
-        <li><a href="#">Delete Recipe</a></li>
+        <li>
+          <a
+            [routerLink]="['edit']"
+            style="cursor:pointer;">Edit Recipe</a>
+        </li>
+        <li><a style="cursor:pointer;">Delete Recipe</a></li>
       </ul>
     </div>
   </div>
@@ -36,8 +40,6 @@
     {{ recipe.description }}
   </div>
 </div>
-
-
 
 <div class="row">
   <div class="col-xs-12">
