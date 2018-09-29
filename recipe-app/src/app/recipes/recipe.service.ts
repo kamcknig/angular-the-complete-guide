@@ -2,7 +2,9 @@ import {Injectable} from '@angular/core';
 import {Recipe} from "./recipe.model";
 import {Ingredient} from "../shared/ingredient.model";
 import {ShoppingListService} from "../shopping-list/shopping-list.service";
-import {Subject} from "rxjs";
+import {Subject, throwError} from "rxjs";
+import {Http} from "@angular/http";
+import {catchError, map, tap} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +37,9 @@ export class RecipeService {
     return this.recipes[id];
   }
 
-  constructor(private shoppingListService: ShoppingListService) {}
+  constructor(private shoppingListService: ShoppingListService,
+              private http: Http) {
+  }
 
   getRecipes = () => {
     return this.recipes.slice();
@@ -58,5 +62,37 @@ export class RecipeService {
   deleteRecipe(id: number) {
     this.recipes.splice(id, 1);
     this.recipesUpdated.next(this.recipes.slice());
+  }
+
+  saveRecipes() {
+    return this.http.put(
+      'https://shopping-list-b30b1.firebaseio.com/recipes.json',
+      this.recipes.slice()
+      )
+      .pipe(
+        map(response => response.json()),
+        catchError(error => throwError(error))
+      );
+  }
+
+  getRecipesFromServer = () => {
+    this.http.get('https://shopping-list-b30b1.firebaseio.com/recipes.json')
+      .pipe(
+        map(response => {
+          const recipes: Recipe[] = response.json();
+          for (let recipe of recipes) {
+            if (!recipe['ingredients']) {
+              recipe['ingredients'] = [];
+            }
+          }
+          return recipes;
+        })
+      )
+      .subscribe(
+        recipes => {
+          this.recipes = recipes;
+          this.recipesUpdated.next(this.recipes.slice())
+        }
+      )
   }
 }
