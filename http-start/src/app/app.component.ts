@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {ServersService} from "./servers.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -18,6 +20,11 @@ export class AppComponent {
       id: this.generateId()
     }
   ];
+
+  appName: Observable<any> = this.serversService.getAppName();
+
+  constructor(private serversService: ServersService) {}
+
   onAddServer(name: string) {
     this.servers.push({
       name: name,
@@ -27,5 +34,29 @@ export class AppComponent {
   }
   private generateId() {
     return Math.round(Math.random() * 10000);
+  }
+
+  onGet = () => {
+    this.serversService.getServers()
+      .subscribe(
+        data => {
+          this.servers = data;
+        },
+        error => {
+          console.log(error);
+        }
+      )
+  };
+
+  onSaveServers() {
+    this.serversService.storeServers(this.servers)
+      .subscribe(
+        response => {
+          console.log(response);
+        },
+        error => {
+          console.log(error);
+        }
+      )
   }
 }
